@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package catworks.common;
+
+message Reference {
+  string id = 1;
+}
