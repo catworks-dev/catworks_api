@@ -1,0 +1,40 @@
+{
+  "title": "Схема JWT токена Catworks",
+  "definitions": {
+    "service": {
+      "properties": {
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "uniqueItems": true
+          },
+          "default": [
+            "read"
+          ]
+        }
+      }
+    }
+  },
+  "properties": {
+    "username": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "number",
+      "$comment": "Число милисекунд, прошедших с 1970-01-01T00:00:00Z, на момент генерации токена"
+    },
+    "ttl": {
+      "type": "number",
+      "$comment": "Время жизни токена в милисекундах"
+    },
+    "services": {
+      "type": "object",
+      "$comment": "Сервисы Catworks, к которым пользователю разрешён доступ",
+      "additionalProperties": {
+        "$ref": "#/definitions/service"
+      }
+    }
+  },
+  "required": ["username", "timestamp", "ttl", "services"]
+}
