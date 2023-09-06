@@ -1,0 +1,35 @@
+title: |md
+# ID service auth
+| { near: top-center }
+
+Sign in / OTT: {
+  shape: sequence_diagram
+    client: Client
+    id: ID Service
+
+    client -> id.invite: id.signOTT
+
+    id.sign -> id.sign: find by OTT
+
+    IF user is draft: {
+      id.sign -> id.sign: mark non-draft
+    }
+
+    id.sign -> client: User & JWT
+}
+
+Validation: {
+  shape: sequence_diagram
+
+  client: Client
+  med: Mediator
+  id: ID Service
+
+  client -> med.rq: Authorized request
+
+  med.rq -> id.rq: id.validate + JWT
+  id.rq -> id.rq: find by JWT
+  id.rq -> med.rq: User
+
+  med.rq -> client: Request result
+}
