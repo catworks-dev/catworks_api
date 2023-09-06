@@ -1,0 +1,93 @@
+syntax = "proto3";
+package catworks.id;
+
+import "google/protobuf/timestamp.proto";
+import "proto/common/msg.proto";
+
+// SERVICES
+
+// Service implementing session management.
+//
+// Note that sessions can be created by authentication services only.
+service IdSessionService {
+  // Finds a session by its ID or token.
+  //
+  // Throws if the session does not exist or is expired.
+  rpc resolve(SessionReference) returns (Session);
+
+  // Aborts existing session.
+  //
+  // Returns true if the session was aborted successfully, otherwise false.
+  rpc abort(SessionReference) returns (common.Check);
+}
+
+
+// MESSAGES
+
+// Reference of session by ID or token.
+message SessionReference {
+  oneof ref {
+    // UUID of the session.
+    string id = 1;
+
+    // JWT used to authenticate the session.
+    string token = 2;
+  }
+}
+
+// Available session information.
+message Session {
+  // Session UUID
+  string id = 1;
+
+  // JWT used to authenticate the session.
+  string token = 2;
+
+  // Reference data. Allows to distinguish between user sessions and service sessions
+  oneof type {
+    // Session for user clients. Should be used by apps only.
+    UserSession user = 3;
+
+    // Session for services. Should be used by services or other automated clients only.
+    ServiceSession service = 4;
+  }
+
+  // List of access scopes granted to the session.
+  repeated string granted = 5;
+
+  // When the session was created.
+  google.protobuf.Timestamp created = 6;
+
+  // When the session will expire.
+  google.protobuf.Timestamp expires = 7;
+}
+
+// Session parameters used to create a new session or update it.
+message SessionParams {
+  reserved 1, 2, 6;
+
+  // Reference data pointing to the user or service associated with the session
+  oneof type {
+    // Session for user clients. Should be used by apps only.
+    UserSession user = 3;
+
+    // Session for services. Should be used by services or other automated clients only.
+    ServiceSession service = 4;
+  }
+
+  // List of access scopes granted to the session.
+  repeated string granted = 5;
+
+  // When the session will expire.
+  google.protobuf.Timestamp expires = 7;
+}
+
+// Reference data pointing to the user associated with the session
+message UserSession {
+  string userId = 1;
+}
+
+// Reference data pointing to the service associated with the session
+message ServiceSession {
+  string tag = 1;
+}

@@ -2,6 +2,13 @@ syntax = "proto3";
 
 package catworks.common;
 
+// Reference pointing to a specific object.
 message Reference {
+  // UUID of the object.
   string id = 1;
+}
+
+// Request result.
+message Check {
+  bool ok = 1;
 }
