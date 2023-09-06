@@ -1,40 +1,52 @@
 {
-  "title": "Схема JWT токена Catworks",
+  "title": "Схема полезной нагрузки JWT-токена Catworks",
   "definitions": {
-    "service": {
+    "id": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$",
+      "description": "UUID-идентификатор"
+    },
+    "user": {
+      "type": "object",
       "properties": {
-        "permissions": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "uniqueItems": true
-          },
-          "default": [
-            "read"
-          ]
+        "id": {
+          "$ref": "#/definitions/id"
+        },
+        "username": {
+          "type": "string"
         }
-      }
+      },
+      "required": [
+        "id",
+        "username"
+      ],
+      "description": "Референс пользователя"
     }
   },
   "properties": {
-    "username": {
-      "type": "string"
+    "session": {
+      "$ref": "#/definitions/id"
     },
-    "timestamp": {
-      "type": "number",
-      "$comment": "Число милисекунд, прошедших с 1970-01-01T00:00:00Z, на момент генерации токена"
+    "user": {
+      "$ref": "#/definitions/user"
     },
-    "ttl": {
-      "type": "number",
-      "$comment": "Время жизни токена в милисекундах"
+    "granted": {
+      "$ref": "access_scope.schema.json/#/definitions/scopes"
     },
-    "services": {
-      "type": "object",
-      "$comment": "Сервисы Catworks, к которым пользователю разрешён доступ",
-      "additionalProperties": {
-        "$ref": "#/definitions/service"
-      }
+    "started": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires": {
+      "type": "string",
+      "format": "date-time"
     }
   },
-  "required": ["username", "timestamp", "ttl", "services"]
+  "required": [
+    "session",
+    "user",
+    "granted",
+    "started",
+    "expires"
+  ]
 }
