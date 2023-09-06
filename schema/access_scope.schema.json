@@ -1,0 +1,29 @@
+{
+  "title": "Перечень областей доступа Catworks.",
+  "definitions": {
+    "scope": {
+      "type": "string",
+      "pattern": "^[a-z]+(\.[a-z]+)+$"
+    },
+    "scopes": {
+      "type": "array",
+      "items": [
+        {
+          "$ref": "#/definitions/scope"
+        },
+        {
+          "$ref": "#/definitions/id_scope"
+        }
+      ]
+    },
+    "id_scope": {
+      "$ref": "#/definitions/scope",
+      "enum": [
+        "id.all",
+        "id.list",
+        "id.invite",
+        "id.self"
+      ]
+    }
+  }
+}

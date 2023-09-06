@@ -1,0 +1,127 @@
+syntax = "proto3";
+package catworks.id;
+
+import "google/protobuf/timestamp.proto";
+import "proto/common/msg.proto";
+
+// SERVICES
+
+// Service implementing the user management.
+service IdUserService {
+  // Exchanges user reference for user data.
+  //
+  // Throws if the user not exists.
+  rpc resolve(common.Reference) returns (User);
+
+  // Creates a new user.
+  //
+  // Requires id.invite to be granted.
+  rpc create(UserParams) returns (User);
+
+  // Updates an existing user.
+  //
+  // Requires id.self to be granted to update self, otherwise requires id.all.
+  // Throws if the user not exists.
+  rpc update(UserParams) returns (User);
+
+  // Grants or revokes permissions to/from a user.
+  //
+  // Requires id.all to be granted.
+  // Throws if the user not exists.
+  rpc grant(GrantsUpdate) returns (User);
+
+  // Deletes an existing user.
+  //
+  // Requires id.self to be granted to update self, otherwise requires id.all.
+  // Returns true if the user was deleted, otherwise false.
+  rpc delete(common.Reference) returns (common.Check);
+}
+
+
+// COMMUNICATION
+
+// Data used to create or update user.
+message UserParams {
+  // UUID of the user to modify.
+  // Ignored when creating a new user.
+  // If not set, update will be applied to the user making the request.
+  optional string id = 1;
+
+  // Draft user mark. If set, the user will be created in draft state.
+  // Ignored when updating an existing user.
+  optional bool draft = 2;
+
+  reserved 3 to 9;
+
+  // Name of the user.
+  string username = 10;
+
+  // URI of the user's avatar.
+  string avatar = 11;
+}
+
+// Data used to grant or revoke permissions to/from a user.
+message GrantsUpdate {
+  // UUID of the user to modify.
+  string id = 1;
+
+  // Permissions to grant.
+  repeated string grant = 2;
+
+  // Permissions to revoke.
+  repeated string revoke = 3;
+}
+
+
+// DATA
+
+// State of a user.
+// Affects user's visibility and ability to login.
+enum UserState {
+  // User is invited by an existing user, but not yet created.
+  DRAFT = 0;
+
+  // User is active and can login.
+  ACTIVE = 1;
+
+  // User is banned and cannot login.
+  BANNED = 2;
+}
+
+// Available information about a user.
+message User {
+  // UUID of the user.
+  string id = 1;
+
+  // State of the user.
+  UserState state = 2;
+
+  // Permissions granted to the user.
+  repeated string granted = 3;
+
+  // Additional information about the user.
+  UserInfo info = 4;
+
+  message UserInfo {
+    // Activity info
+
+    // When the user signed up.
+    google.protobuf.Timestamp signedUp = 1;
+
+    // When the user was last active.
+    google.protobuf.Timestamp lastActivity = 2;
+
+    reserved 3 to 9;
+
+
+    // Social info
+
+    // Name of the user.
+    string username = 10;
+
+    // URI of the user's avatar.
+    string avatar = 11;
+
+    reserved 12 to 29;
+  }
+}
