@@ -2,7 +2,7 @@ syntax = "proto3";
 package catworks.id;
 
 import "proto/id/session.proto";
-import "google/protobuf/timestamp.proto";
+import "proto/google/protobuf/timestamp.proto";
 
 // SERVICES
 
