@@ -33,7 +33,7 @@
     "granted": {
       "$ref": "access_scope.schema.json/#/definitions/scopes"
     },
-    "started": {
+    "created": {
       "type": "string",
       "format": "date-time"
     },
@@ -44,9 +44,8 @@
   },
   "required": [
     "session",
-    "user",
     "granted",
-    "started",
+    "created",
     "expires"
   ]
 }
