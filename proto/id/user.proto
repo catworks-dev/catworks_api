@@ -13,16 +13,16 @@ service IdUserService {
   // Throws if the user not exists.
   rpc resolve(common.Reference) returns (User);
 
-  // Creates a new user.
+  // Creates a new user in a draft state.
   //
   // Requires id.invite to be granted.
-  rpc create(UserParams) returns (User);
+  rpc create(UserInfo) returns (User);
 
   // Updates an existing user.
   //
   // Requires id.self to be granted to update self, otherwise requires id.all.
   // Throws if the user not exists.
-  rpc update(UserParams) returns (User);
+  rpc update(UserUpdate) returns (User);
 
   // Grants or revokes permissions to/from a user.
   //
@@ -41,23 +41,23 @@ service IdUserService {
 // COMMUNICATION
 
 // Data used to create or update user.
-message UserParams {
+message UserUpdate {
   // UUID of the user to modify.
   // Ignored when creating a new user.
   // If not set, update will be applied to the user making the request.
   optional string id = 1;
 
-  // Draft user mark. If set, the user will be created in draft state.
-  // Ignored when updating an existing user.
-  optional bool draft = 2;
+  // New state of the user.
+  //
+  // Will not be updated if not set or id.all is not granted to current session.
+  optional UserState state = 2;
 
-  reserved 3 to 9;
-
-  // Name of the user.
-  string username = 10;
-
-  // URI of the user's avatar.
-  string avatar = 11;
+  // Updated user info.
+  //
+  // Will be updated if set and:
+  // - Updating owner of current session & id.self is granted
+  // - id.all is granted to current session
+  optional UserInfo info = 3;
 }
 
 // Data used to grant or revoke permissions to/from a user.
@@ -99,29 +99,30 @@ message User {
   // Permissions granted to the user.
   repeated string granted = 3;
 
+  // Activity info
+
+  // When the user signed up.
+  //
+  // Not set if the user is in a draft state.
+  optional google.protobuf.Timestamp signedUp = 4;
+
+  // When the user was last active.
+  //
+  // Not set if the user is in a draft state.
+  optional google.protobuf.Timestamp lastActivity = 5;
+
+  reserved 6 to 9;
+
   // Additional information about the user.
-  UserInfo info = 4;
+  UserInfo info = 10;
+}
 
-  message UserInfo {
-    // Activity info
+message UserInfo {
+  // Social info
 
-    // When the user signed up.
-    google.protobuf.Timestamp signedUp = 1;
+  // Name of the user.
+  string username = 10;
 
-    // When the user was last active.
-    google.protobuf.Timestamp lastActivity = 2;
-
-    reserved 3 to 9;
-
-
-    // Social info
-
-    // Name of the user.
-    string username = 10;
-
-    // URI of the user's avatar.
-    string avatar = 11;
-
-    reserved 12 to 29;
-  }
+  // URI of the user's avatar.
+  string avatar = 11;
 }
