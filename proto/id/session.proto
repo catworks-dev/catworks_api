@@ -60,34 +60,27 @@ message Session {
 
   // When the session will expire.
   google.protobuf.Timestamp expires = 7;
+
+  // Reference data pointing to the user associated with the session
+  message UserSession {
+    string userId = 1;
+  }
+
+  // Reference data pointing to the service associated with the session
+  message ServiceSession {
+    string tag = 1;
+  }
 }
 
-// Session parameters used to create a new session or update it.
+// Session parameters used to create a new session.
 message SessionParams {
-  reserved 1, 2, 6;
+  reserved 1, 2, 4, 6;
 
-  // Reference data pointing to the user or service associated with the session
-  oneof type {
-    // Session for user clients. Should be used by apps only.
-    UserSession user = 3;
-
-    // Session for services. Should be used by services or other automated clients only.
-    ServiceSession service = 4;
-  }
+  string userId = 3;
 
   // List of access scopes granted to the session.
   repeated string granted = 5;
 
   // When the session will expire.
   google.protobuf.Timestamp expires = 7;
-}
-
-// Reference data pointing to the user associated with the session
-message UserSession {
-  string userId = 1;
-}
-
-// Reference data pointing to the service associated with the session
-message ServiceSession {
-  string tag = 1;
 }
