@@ -3,7 +3,7 @@
   "definitions": {
     "scope": {
       "type": "string",
-      "pattern": "^[a-z]+(\.[a-z]+)+$"
+      "pattern": "^([a-z]+[a-z0-9]*)(\\.[a-z]+[a-z0-9]*)+$"
     },
     "scopes": {
       "type": "array",
