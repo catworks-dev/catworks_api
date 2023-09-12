@@ -1,0 +1,26 @@
+syntax = "proto3";
+package catworks.id;
+
+import "proto/id/session.proto";
+import "proto/google/protobuf/timestamp.proto";
+
+// SERVICES
+
+// Service implementing one time password authentication.
+service IdOtpService {
+  // Creates new one time password.
+  rpc create(SessionParams) returns (OtpContainer);
+
+  // Exchanges one time password for session.
+  rpc use(OtpContainer) returns (Session);
+}
+
+
+// MESSAGES
+
+// Essential data for one time password auth.
+message OtpContainer {
+  string password = 1;
+
+  optional google.protobuf.Timestamp expires = 2;
+}
