@@ -13,3 +13,8 @@ message Reference {
 message Check {
   bool ok = 1;
 }
+
+// Empty message.
+message Empty {
+  // Intentionally left blank.
+}

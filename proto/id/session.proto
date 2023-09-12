@@ -15,6 +15,9 @@ service IdSessionService {
   // Throws if the session does not exist or is expired.
   rpc resolve(SessionReference) returns (Session);
 
+  // Finds all sessions owned by the current user or service.
+  rpc my(common.Empty) returns (Sessions);
+
   // Aborts existing session.
   //
   // Returns true if the session was aborted successfully, otherwise false.
@@ -33,6 +36,11 @@ message SessionReference {
     // JWT used to authenticate the session.
     string token = 2;
   }
+}
+
+// List of sessions.
+message Sessions {
+  repeated Session sessions = 1;
 }
 
 // Available session information.

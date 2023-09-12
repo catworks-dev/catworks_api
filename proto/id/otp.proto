@@ -9,18 +9,26 @@ import "proto/google/protobuf/timestamp.proto";
 // Service implementing one time password authentication.
 service IdOtpService {
   // Creates new one time password.
-  rpc create(SessionParams) returns (OtpContainer);
+  rpc create(SessionParams) returns (OtpData);
 
-  // Exchanges one time password for session.
-  rpc use(OtpContainer) returns (Session);
+  // Starts new session using one time password.
+  //
+  // If invalidate is set, the specified password will be removed.
+  rpc signIn(OtpSignIn) returns (Session);
 }
 
 
 // MESSAGES
 
 // Essential data for one time password auth.
-message OtpContainer {
+message OtpData {
   string password = 1;
 
-  optional google.protobuf.Timestamp expires = 2;
+  google.protobuf.Timestamp expires = 2;
+}
+
+message OtpSignIn {
+  string password = 1;
+
+  optional bool invalidate = 2;
 }
